@@ -14,7 +14,7 @@ class Home extends React.Component<IProps , IState>{
 
   state = {
     arr: [],
-    delay: 50
+    delay: 30
   }
 
   //crate async setState for multiple purpose
@@ -36,10 +36,8 @@ class Home extends React.Component<IProps , IState>{
     
     //suffle array
     for (let i = arr.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1))
-      {
+      const j = Math.floor(Math.random() * (i + 1));
         [arr[i], arr[j]] = [arr[j], arr[i]]
-      }
     }
 
     return arr
@@ -70,17 +68,39 @@ class Home extends React.Component<IProps , IState>{
     }
   }
 
+  private _insertionSort = async () => {
+    const arr = this.state.arr
+    let length = arr.length;
+    for (let i = 1; i < length; i++) {
+        let key = arr[i];
+        let j = i - 1;
+        while (j >= 0 && arr[j] > key) {
+            arr[j + 1] = arr[j];
+            j = j - 1;
+        }
+        arr[j + 1] = key;
+
+        //set delay
+        await this._delay(this.state.delay)
+        // update state after 1 iteration
+        this.setState({
+          arr: arr
+        })
+    }
+  }
+
   private _handleReset = async () => {
     const arr = this._randNumArr(35)
     await this._asyncSetState({ arr })
   }
 
   async componentDidMount(){
-    const arr = this._randNumArr(35)
+    const arr = this._randNumArr(70)
     await this._asyncSetState({ arr })
 
     //visualize bubble sort algorithm, sort data from state.arr
     this._bubbleSort()
+    // this._insertionSort()
   }
 
   render(){
@@ -91,7 +111,8 @@ class Home extends React.Component<IProps , IState>{
           {this.state.arr.map((numb) => (
             <Stick
               width={`1%`}
-              height={`${3*numb}%`}
+              height={`${100/this.state.arr.length*numb}%`}
+              backgroundColor={`rgba(0, ${numb*4}, 145)`}
             />
           ))}
           {JSON.stringify(this.state.arr)}
