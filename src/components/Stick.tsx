@@ -2,14 +2,14 @@ import React from "react"
 import "./stick.css"
 
 interface IStyle {
-  height: number,
-  width: number
+  height: string,
+  width: string
 }
 
 interface IProps extends IStyle {}
 
 const Stick = (props: IProps) => {
-  const style: IStyle = {
+  const style: IStyle = { 
     height: props.height,
     width: props.width
   }

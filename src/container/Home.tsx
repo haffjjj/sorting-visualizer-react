@@ -1,7 +1,7 @@
 import React from "react"
 
-// import Stick from "../components/Stick"
-// import "./home.css"
+import Stick from "../components/Stick"
+import "./home.css"
 
 interface IProps {}
 
@@ -64,13 +64,19 @@ class Home extends React.Component<IProps , IState>{
                 this.setState({
                   arr: arr
                 })
+                
             }
         }
     }
   }
 
+  private _handleReset = async () => {
+    const arr = this._randNumArr(35)
+    await this._asyncSetState({ arr })
+  }
+
   async componentDidMount(){
-    const arr = this._randNumArr(20)
+    const arr = this._randNumArr(35)
     await this._asyncSetState({ arr })
 
     //visualize bubble sort algorithm, sort data from state.arr
@@ -80,8 +86,15 @@ class Home extends React.Component<IProps , IState>{
   render(){
     return (
       <div className="wrapper">
+        <button onClick={this._handleReset}>reset</button>
         <div className="display">
-          <p>{JSON.stringify(this.state.arr)}</p>
+          {this.state.arr.map((numb) => (
+            <Stick
+              width={`1%`}
+              height={`${3*numb}%`}
+            />
+          ))}
+          {JSON.stringify(this.state.arr)}
         </div>
       </div>
     )
