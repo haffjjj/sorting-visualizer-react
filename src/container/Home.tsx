@@ -7,33 +7,35 @@ interface IProps {}
 
 interface IState {
   arr: number[],
-  delay: number
+  delay: number,
+  swap: number
 }
 
 class Home extends React.Component<IProps , IState>{
 
   state = {
     arr: [],
-    delay: 30
+    delay: 10,
+    swap: 0
   }
 
   //crate async setState for multiple purpose
-  private _asyncSetState = async (state: any) => {
+  _asyncSetState = async (state: any) => {
     return new Promise((r) => {
       this.setState(state, r)
     })
   }
 
-  private _delay = async (delay: number) => {
+  _delay = async (delay: number) => {
     return new Promise((r) => {
       setTimeout(() => r(), delay)
     })
   }
 
-  private _randNumArr = (total: number):number[] => {
+  _randNumArr = (total: number):number[] => {
     let arr:number[] = []
     for (let i = 1; i <= total; i++) arr.push(i)
-    
+     
     //suffle array
     for (let i = arr.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
@@ -43,7 +45,7 @@ class Home extends React.Component<IProps , IState>{
     return arr
   }
 
-  private _bubbleSort = async () => {
+  _bubbleSort = async () => {
     //get array from state
     const arr = this.state.arr
     let len = arr.length;
@@ -60,7 +62,8 @@ class Home extends React.Component<IProps , IState>{
                 await this._delay(this.state.delay)
                 // update state after 1 iteration
                 this.setState({
-                  arr: arr
+                  arr: arr,
+                  swap: this.state.swap + 1
                 })
                 
             }
@@ -68,7 +71,7 @@ class Home extends React.Component<IProps , IState>{
     }
   }
 
-  private _insertionSort = async () => {
+  _insertionSort = async () => {
     const arr = this.state.arr
     let length = arr.length;
     for (let i = 1; i < length; i++) {
@@ -84,30 +87,32 @@ class Home extends React.Component<IProps , IState>{
         await this._delay(this.state.delay)
         // update state after 1 iteration
         this.setState({
-          arr: arr
+          arr: arr,
+          swap: this.state.swap + 1
         })
     }
   }
 
-  private _handleReset = async () => {
+  _handleReset = async () => {
     const arr = this._randNumArr(35)
     await this._asyncSetState({ arr })
   }
 
   async componentDidMount(){
-    const arr = this._randNumArr(70)
+    const arr = this._randNumArr(100)
     await this._asyncSetState({ arr })
 
     //visualize bubble sort algorithm, sort data from state.arr
-    this._bubbleSort()
-    // this._insertionSort()
+    // this._bubbleSort()
+    this._insertionSort()
   }
 
   render(){
     return (
       <div className="wrapper">
-        <button onClick={this._handleReset}>reset</button>
         <div className="display">
+          <button>reset</button>
+          <div className="sort">
           {this.state.arr.map((numb) => (
             <Stick
               width={`1%`}
@@ -115,7 +120,10 @@ class Home extends React.Component<IProps , IState>{
               backgroundColor={`rgba(0, ${numb*4}, 145)`}
             />
           ))}
-          {JSON.stringify(this.state.arr)}
+          <div className="log">
+            {/* <p>{JSON.stringify(this.state.arr)}</p> */}
+          </div>
+          </div>
         </div>
       </div>
     )
