@@ -7,16 +7,18 @@ interface IProps {}
 
 interface IState {
   arr: number[],
+  arrActive: number[]
   delay: number,
-  swap: number
+  iteration: number,
 }
 
 class Home extends React.Component<IProps , IState>{
 
   state = {
     arr: [],
-    delay: 10,
-    swap: 0
+    arrActive: [],
+    delay: 1000,
+    iteration: 0
   }
 
   //crate async setState for multiple purpose
@@ -54,6 +56,9 @@ class Home extends React.Component<IProps , IState>{
     for (let i = 0; i < len; i++) {
         for (let j = 0; j < len; j++) {
             if (arr[j] > arr[j + 1]) {
+                await this._asyncSetState({
+                  arrActive: [arr[j + 1], arr[j]]
+                })
                 let tmp = arr[j]
                 arr[j] = arr[j + 1]
                 arr[j + 1] = tmp
@@ -63,9 +68,8 @@ class Home extends React.Component<IProps , IState>{
                 // update state after 1 iteration
                 this.setState({
                   arr: arr,
-                  swap: this.state.swap + 1
-                })
-                
+                  iteration: this.state.iteration + 1
+                })                
             }
         }
     }
@@ -78,6 +82,11 @@ class Home extends React.Component<IProps , IState>{
         let key = arr[i];
         let j = i - 1;
         while (j >= 0 && arr[j] > key) {
+
+            await this._asyncSetState({
+              arrActive: [arr[j + 1], arr[j]]
+            })
+
             arr[j + 1] = arr[j];
             j = j - 1;
         }
@@ -88,41 +97,48 @@ class Home extends React.Component<IProps , IState>{
         // update state after 1 iteration
         this.setState({
           arr: arr,
-          swap: this.state.swap + 1
+          iteration: this.state.iteration + 1
         })
     }
   }
 
   _handleReset = async () => {
-    const arr = this._randNumArr(35)
+    const arr = this._randNumArr(100)
     await this._asyncSetState({ arr })
   }
 
   async componentDidMount(){
-    const arr = this._randNumArr(100)
-    await this._asyncSetState({ arr })
-
+    await this._handleReset()
     //visualize bubble sort algorithm, sort data from state.arr
-    // this._bubbleSort()
-    this._insertionSort()
+    this._bubbleSort()
+    // this._insertionSort()
   }
 
   render(){
     return (
       <div className="wrapper">
         <div className="display">
-          <button>reset</button>
+
+          <div className="control">
+            {/* <button>reset</button>
+            <button>reset</button> */}
+          </div>
+
           <div className="sort">
           {this.state.arr.map((numb) => (
             <Stick
               width={`1%`}
               height={`${100/this.state.arr.length*numb}%`}
-              backgroundColor={`rgba(0, ${numb*4}, 145)`}
+              isActive={this.state.arrActive.includes(numb) ? true : false}
             />
           ))}
-          <div className="log">
-            {/* <p>{JSON.stringify(this.state.arr)}</p> */}
           </div>
+          <div className="log">
+            <p>array total: {JSON.stringify(this.state.arr.length)}</p>
+            <p>algorithm: bubble sort</p>
+            <p>swap: {JSON.stringify(this.state.arrActive)}</p>
+            <p>iteration: {JSON.stringify(this.state.iteration)}</p>
+            <p>log: {JSON.stringify(this.state.arr)}</p>
           </div>
         </div>
       </div>

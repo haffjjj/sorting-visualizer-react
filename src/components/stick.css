@@ -1,6 +1,10 @@
-.stick{
-  background-color: black;
+.wrap_stick{
   width: 100px; /*default width */
   height: 100px; /*default height */
-  /* margin: 2px; */
+  padding: 1px;
+}
+
+.stick{
+  width: 100%;
+  height: 100%;
 }
